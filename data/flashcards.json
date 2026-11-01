@@ -1,0 +1,99 @@
+[
+  {
+    "id": "set-1793528590914",
+    "documentId": "doc-sample-transformers",
+    "createdAt": "2026-11-01T10:23:10.914Z",
+    "cards": [
+      {
+        "id": "card-1793528590914-0",
+        "question": "What is the primary architectural innovation of the Transformer compared to traditional sequence transduction models?",
+        "answer": "The Transformer dispenses with recurrent and convolutional neural networks entirely, relying solely on attention mechanisms to draw global dependencies between input and output.",
+        "difficulty": "Easy",
+        "pageNumber": 1,
+        "tag": "Architecture",
+        "mastered": false
+      },
+      {
+        "id": "card-1793528590914-1",
+        "question": "How many layers are included in the encoder and decoder stacks of the Transformer?",
+        "answer": "Both the encoder and the decoder are composed of a stack of N = 6 identical layers.",
+        "difficulty": "Easy",
+        "pageNumber": 3,
+        "tag": "Architecture",
+        "mastered": false
+      },
+      {
+        "id": "card-1793528590914-2",
+        "question": "What is the purpose of the masking applied to the decoder's self-attention sub-layer?",
+        "answer": "Masking prevents positions from attending to subsequent positions, ensuring that predictions for position i can only depend on known outputs at positions less than i.",
+        "difficulty": "Medium",
+        "pageNumber": 3,
+        "tag": "Decoder",
+        "mastered": false
+      },
+      {
+        "id": "card-1793528590914-3",
+        "question": "What is the formula for the Scaled Dot-Product Attention function?",
+        "answer": "The formula is Attention(Q, K, V) = softmax(Q K^T / sqrt(d_k)) V, where Q, K, and V represent the matrices of queries, keys, and values respectively.",
+        "difficulty": "Medium",
+        "pageNumber": 4,
+        "tag": "Attention",
+        "mastered": false
+      },
+      {
+        "id": "card-1793528590914-4",
+        "question": "Why is the 1/sqrt(d_k) factor included in the Scaled Dot-Product Attention?",
+        "answer": "The scaling factor is used during the computation of the attention weights to counteract the effect of large dot products, which can push the softmax function into regions with extremely small gradients.",
+        "difficulty": "Hard",
+        "pageNumber": 4,
+        "tag": "Attention",
+        "mastered": false
+      },
+      {
+        "id": "card-1793528590914-5",
+        "question": "How does Multi-Head Attention differ from a single attention function?",
+        "answer": "Multi-Head Attention projects queries, keys, and values h times with different learned linear projections, allowing the model to jointly attend to information from different representation subspaces at different positions.",
+        "difficulty": "Medium",
+        "pageNumber": 4,
+        "tag": "Attention",
+        "mastered": false
+      },
+      {
+        "id": "card-1793528590914-6",
+        "question": "Since the Transformer lacks recurrence and convolution, how does it incorporate sequence order?",
+        "answer": "The model uses positional encodings, computed with sine and cosine functions of different frequencies, which are added to the input embeddings at the bottom of the encoder and decoder stacks.",
+        "difficulty": "Medium",
+        "pageNumber": 5,
+        "tag": "Positional Encoding",
+        "mastered": false
+      },
+      {
+        "id": "card-1793528590914-7",
+        "question": "What is the output dimension (d_model) used for sub-layers and embeddings in the Transformer?",
+        "answer": "The Transformer uses a fixed output dimension of d_model = 512 for all sub-layers and embedding layers to facilitate the use of residual connections.",
+        "difficulty": "Easy",
+        "pageNumber": 3,
+        "tag": "Architecture",
+        "mastered": false
+      },
+      {
+        "id": "card-1793528590914-8",
+        "question": "What training optimization and hyperparameter settings were used for the WMT 2014 experiments?",
+        "answer": "The model was trained using the Adam optimizer with beta_1 = 0.9, beta_2 = 0.98, and epsilon = 10^-9, alongside a learning rate schedule that included 4000 warmup steps.",
+        "difficulty": "Hard",
+        "pageNumber": 5,
+        "tag": "Training",
+        "mastered": false
+      },
+      {
+        "id": "card-1793528590914-9",
+        "question": "What are the two major advantages of the Transformer mentioned in the results?",
+        "answer": "The Transformer is superior in translation quality, as evidenced by record-breaking BLEU scores, and is significantly more parallelizable, leading to much faster training times.",
+        "difficulty": "Easy",
+        "pageNumber": 1,
+        "tag": "Performance",
+        "mastered": false
+      }
+    ]
+  }
+]
