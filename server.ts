@@ -42,7 +42,7 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 const app = express();
 app.use(express.json({ limit: '25mb' }));
 
-// Multer memory storage for PDF processing
+
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 25 * 1024 * 1024 }, // 25 MB max
@@ -55,14 +55,9 @@ const upload = multer({
   },
 });
 
-// Initialize database
+
 await initStorage();
 
-// -------------------------------------------------------------
-// API ROUTES
-// -------------------------------------------------------------
-
-// 1. App Statistics
 app.get('/api/stats', async (_req: Request, res: Response) => {
   try {
     const stats = await getAppStats();
@@ -72,11 +67,11 @@ app.get('/api/stats', async (_req: Request, res: Response) => {
   }
 });
 
-// 2. Documents List
+
 app.get('/api/documents', async (_req: Request, res: Response) => {
   try {
     const docs = await getDocuments();
-    // Return summary without heavy chunks
+   
     const summaries = docs.map((d) => ({
       id: d.id,
       name: d.name,
@@ -94,7 +89,7 @@ app.get('/api/documents', async (_req: Request, res: Response) => {
   }
 });
 
-// 3. Document Details
+
 app.get('/api/documents/:id', async (req: Request, res: Response) => {
   try {
     const doc = await getDocumentById(req.params.id);
@@ -107,7 +102,7 @@ app.get('/api/documents/:id', async (req: Request, res: Response) => {
   }
 });
 
-// 4. Upload PDF
+
 app.post(
   '/api/documents/upload',
   upload.single('pdf'),
@@ -135,10 +130,10 @@ app.post(
       };
       await saveDocument(newDoc);
 
-      // 2. Extract PDF text page-by-page
+     
       const extractResult = await extractPdfData(req.file.buffer);
 
-      // Scanned PDF detection
+     
       if (!extractResult.hasText) {
         newDoc.status = 'failed';
         newDoc.pageCount = extractResult.totalPages;
@@ -151,7 +146,7 @@ app.post(
         });
       }
 
-      // 3. Indexing Chunks with Embeddings
+     
       newDoc.status = 'indexing';
       newDoc.pageCount = extractResult.totalPages;
       newDoc.wordCount = extractResult.totalWords;
@@ -176,7 +171,7 @@ app.post(
   }
 );
 
-// 5. Delete Document
+
 app.delete('/api/documents/:id', async (req: Request, res: Response) => {
   try {
     const success = await deleteDocument(req.params.id);
@@ -189,7 +184,7 @@ app.delete('/api/documents/:id', async (req: Request, res: Response) => {
   }
 });
 
-// 6. Reset / Seed Sample Documents
+
 app.post('/api/documents/reset-samples', async (_req: Request, res: Response) => {
   try {
     await initStorage();
@@ -200,7 +195,7 @@ app.post('/api/documents/reset-samples', async (_req: Request, res: Response) =>
   }
 });
 
-// 7. Grounded Chat Q&A
+
 app.post('/api/chat', async (req: Request, res: Response) => {
   const { documentId, question } = req.body;
   if (!documentId || !question) {
@@ -219,7 +214,7 @@ app.post('/api/chat', async (req: Request, res: Response) => {
       });
     }
 
-    // A. Semantic Retrieval & Scoring
+   
     const queryEmbedding = await generateEmbedding(question);
     const scoredChunks = doc.chunks.map((chunk) => {
       let score = 0;
@@ -233,11 +228,11 @@ app.post('/api/chat', async (req: Request, res: Response) => {
       return { chunk, score };
     });
 
-    // Sort by score descending and take top 4-5
+   
     scoredChunks.sort((a, b) => b.score - a.score);
     const topMatches = scoredChunks.slice(0, 5);
 
-    // Prepare sources for UI
+   
     const sources: GroundedSource[] = topMatches
       .filter((m) => m.score > 0.05 || m.chunk.text.length > 50)
       .slice(0, 3)
@@ -247,12 +242,12 @@ app.post('/api/chat', async (req: Request, res: Response) => {
         relevanceScore: Math.min(Math.round(Math.max(m.score, 0.45) * 100), 99),
       }));
 
-    // Build context
+   
     const contextText = topMatches
       .map((m) => `[Source Page ${m.chunk.pageNumber}]:\n${m.chunk.text}`)
       .join('\n\n---\n\n');
 
-    // Recent chat history
+    
     const history = await getChatHistory(documentId);
     const recentHistoryText = history
       .slice(-4)
@@ -319,7 +314,7 @@ Provide a direct, thorough, and accurately cited answer based ONLY on the docume
   }
 });
 
-// 8. Get Chat History
+
 app.get('/api/chat/:documentId', async (req: Request, res: Response) => {
   try {
     const history = await getChatHistory(req.params.documentId);
@@ -329,7 +324,7 @@ app.get('/api/chat/:documentId', async (req: Request, res: Response) => {
   }
 });
 
-// 9. Clear Chat History
+
 app.delete('/api/chat/:documentId', async (req: Request, res: Response) => {
   try {
     await clearChatHistory(req.params.documentId);
@@ -339,7 +334,7 @@ app.delete('/api/chat/:documentId', async (req: Request, res: Response) => {
   }
 });
 
-// 10. Generate Summary
+
 app.post('/api/summary', async (req: Request, res: Response) => {
   const { documentId, type = 'executive' } = req.body;
   if (!documentId) {
@@ -352,7 +347,7 @@ app.post('/api/summary', async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Document not found' });
     }
 
-    // Compile document text
+    
     const fullText = doc.pages
       .map((p) => `--- PAGE ${p.pageNumber} ---\n${p.text}`)
       .join('\n\n')
